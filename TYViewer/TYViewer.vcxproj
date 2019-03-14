@@ -129,10 +129,11 @@
     <ClCompile Include="graphics\shader.cpp" />
     <ClCompile Include="graphics\submesh.cpp" />
     <ClCompile Include="graphics\texture.cpp" />
-    <ClCompile Include="loader\assets\Model.cpp" />
+    <ClCompile Include="input\keyboard.cpp" />
+    <ClCompile Include="loader\assets\model.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="util\BitConverter.cpp" />
-    <ClCompile Include="util\StringExt.cpp" />
+    <ClCompile Include="util\bitconverter.cpp" />
+    <ClCompile Include="util\stringext.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="graphics\drawable.h" />
@@ -141,12 +142,13 @@
     <ClInclude Include="graphics\texture.h" />
     <ClInclude Include="graphics\transformable.h" />
     <ClInclude Include="graphics\vertex.h" />
-    <ClInclude Include="loader\Asset.h" />
+    <ClInclude Include="input\keyboard.h" />
+    <ClInclude Include="loader\asset.h" />
     <ClInclude Include="assets\MDG3.h" />
     <ClInclude Include="assets\MDL2.h" />
-    <ClInclude Include="loader\assets\Model.h" />
-    <ClInclude Include="util\BitConverter.h" />
-    <ClInclude Include="util\StringExt.h" />
+    <ClInclude Include="loader\assets\model.h" />
+    <ClInclude Include="util\bitconverter.h" />
+    <ClInclude Include="util\stringext.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\default.shader" />

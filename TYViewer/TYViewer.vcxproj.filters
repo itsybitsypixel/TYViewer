@@ -21,19 +21,10 @@
     <ClCompile Include="glad.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="util\BitConverter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="util\StringExt.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="assets\MDL2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="assets\MDG3.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="loader\assets\Model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="graphics\shader.cpp">
@@ -45,24 +36,24 @@
     <ClCompile Include="graphics\submesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="input\keyboard.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="util\stringext.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="util\bitconverter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="loader\assets\model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="util\BitConverter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="util\StringExt.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="assets\MDL2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="assets\MDG3.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="loader\Asset.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="loader\assets\Model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="graphics\vertex.h">
@@ -81,6 +72,21 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="graphics\transformable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="input\keyboard.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="util\stringext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="util\bitconverter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="loader\asset.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="loader\assets\model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

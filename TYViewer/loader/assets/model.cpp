@@ -3,8 +3,8 @@
 #include <fstream>
 #include <iostream>
 
-#include "util/BitConverter.h"
-#include "util/StringExt.h"
+#include "util/bitconverter.h"
+#include "util/stringext.h"
 
 namespace Loader
 {

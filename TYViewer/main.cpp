@@ -3,6 +3,7 @@
 #include <iostream>
 #include <sstream>
 #include <unordered_map>
+#include <chrono>
 
 #include <GLAD/glad.h>
 #include <GLFW/glfw3.h>
@@ -18,6 +19,8 @@
 
 #include "loader/assets/Model.h"
 
+#include "input/keyboard.h"
+
 int main()
 {
 	GLFWwindow* window;
@@ -25,11 +28,11 @@ int main()
 	if (!glfwInit())
 		return -1;
 
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	window = glfwCreateWindow(1920, 1080, "TYViewer", NULL, NULL);
+	window = glfwCreateWindow(640, 480, "TYViewer", NULL, NULL);
 	if (!window)
 	{
 		std::cout << "Failed to create GLFWwindow!" << std::endl;
@@ -61,7 +64,7 @@ int main()
 	};
 
 	Loader::Model model;
-	model.loadFromFile(EMPTY);
+	model.loadFromFile("res/models/Act_01_ty.mdl");
 
 	std::vector<Submesh*> submeshes;
 	std::unordered_map<std::string, Texture*> textures;
@@ -135,24 +138,47 @@ int main()
 	
 	shader.unbind();
 
-	float radius = 406.0f;
+	float radius = 180.0f;
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glEnable(GL_DEPTH_TEST);
 
+	Keyboard keyboard;
+
+	float elapsed = 0.0f;
+	float previous = 0.0f;
+
+	float dt = 0.0f;
+
+	float rotX = 0.0f;
+
 	while (!glfwWindowShouldClose(window))
 	{
+		elapsed = glfwGetTime();
+		dt = elapsed - previous;
+		previous = elapsed;
+
+		keyboard.process(window, dt);
+
 		glClearColor(0.3f, 0.3f, 0.3f, 0.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glm::mat4 projection = glm::mat4(-1.0f);
-		projection = glm::perspective(glm::radians(80.0f), (float)1920 / (float)1080, 0.1f, 50500.0f);
+		projection = glm::perspective(glm::radians(55.0f), (float)1920 / (float)1080, 0.1f, 50500.0f);
 
+		if (keyboard.isKeyHeld(GLFW_KEY_LEFT))
+		{
+			rotX -= 3.0f * dt;
+		}
+		if (keyboard.isKeyHeld(GLFW_KEY_RIGHT))
+		{
+			rotX += 3.0f * dt;
+		}
 		
-		float camX = sin(glfwGetTime()) * radius;
-		float camZ = cos(glfwGetTime()) * radius;
+		float camX = sin(rotX) * radius;
+		float camZ = cos(rotX) * radius;
 		glm::mat4 view;
 		view = glm::lookAt(glm::vec3(camX, 70.0, camZ), glm::vec3(0.0, 70.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
 
