@@ -123,34 +123,44 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="assets\MDG3.cpp" />
-    <ClCompile Include="assets\MDL2.cpp" />
     <ClCompile Include="glad.c" />
+    <ClCompile Include="graphics\camera.cpp" />
+    <ClCompile Include="graphics\renderer.cpp" />
     <ClCompile Include="graphics\shader.cpp" />
     <ClCompile Include="graphics\submesh.cpp" />
     <ClCompile Include="graphics\texture.cpp" />
+    <ClCompile Include="application.cpp" />
     <ClCompile Include="input\keyboard.cpp" />
+    <ClCompile Include="input\mouse.cpp" />
+    <ClCompile Include="loader\assets\mad.cpp" />
     <ClCompile Include="loader\assets\model.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="util\bitconverter.cpp" />
     <ClCompile Include="util\stringext.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="graphics\camera.h" />
     <ClInclude Include="graphics\drawable.h" />
+    <ClInclude Include="graphics\material.h" />
+    <ClInclude Include="graphics\renderer.h" />
     <ClInclude Include="graphics\shader.h" />
     <ClInclude Include="graphics\submesh.h" />
     <ClInclude Include="graphics\texture.h" />
     <ClInclude Include="graphics\transformable.h" />
     <ClInclude Include="graphics\vertex.h" />
+    <ClInclude Include="application.h" />
     <ClInclude Include="input\keyboard.h" />
+    <ClInclude Include="input\mouse.h" />
     <ClInclude Include="loader\asset.h" />
     <ClInclude Include="assets\MDG3.h" />
     <ClInclude Include="assets\MDL2.h" />
+    <ClInclude Include="loader\assets\mad.h" />
     <ClInclude Include="loader\assets\model.h" />
     <ClInclude Include="util\bitconverter.h" />
     <ClInclude Include="util\stringext.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="res\models\default.mdl" />
     <None Include="res\shaders\default.shader" />
   </ItemGroup>
   <ItemGroup>

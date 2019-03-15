@@ -11,6 +11,7 @@ public:
 	static std::vector<std::string> split(const std::string& s, char splitChar);
 	static std::string getTypeFromFilename(const std::string& s);
 
+	static void readUntil(const char* buffer, size_t position, char delimiter, std::string& s);
 	static void readUntilNull(const char* buffer, size_t position, std::string& s);
 	
 };

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <array>
-#include <unordered_map>
 
 #include "GLFW/glfw3.h"
 
@@ -110,7 +109,7 @@ enum struct Keys
 class Keyboard
 {
 public:
-	Keyboard() = default;
+	Keyboard();
 
 	inline bool isKeyPressed(int key) const
 	{

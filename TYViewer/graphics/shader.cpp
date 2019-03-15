@@ -8,7 +8,10 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-Shader::Shader(const std::string & filepath)
+Shader::Shader()
+	: m_id(0)
+{}
+Shader::Shader(const std::string& filepath)
 	: m_id(0)
 {
 	ShaderProgramSource source = parse(filepath);

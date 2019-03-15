@@ -19,6 +19,7 @@ struct ShaderProgramSource
 class Shader
 {
 public:
+	Shader();
 	Shader(const std::string& filepath);
 	~Shader();
 

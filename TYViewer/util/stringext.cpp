@@ -26,11 +26,16 @@ std::string StringExt::getTypeFromFilename(const std::string& s)
 	return segments[segments.size() - 1];
 }
 
-void StringExt::readUntilNull(const char* buffer, size_t position, std::string& s)
+void StringExt::readUntil(const char * buffer, size_t position, char delimiter, std::string & s)
 {
-	while (buffer[position] != '\0')
+	do
 	{
 		s += (char)buffer[position];
 		position++;
-	}
+	} while (buffer[position] != delimiter);
+}
+
+void StringExt::readUntilNull(const char* buffer, size_t position, std::string& s)
+{
+	readUntil(buffer, position, '\0', s);
 }

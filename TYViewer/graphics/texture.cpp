@@ -5,10 +5,14 @@
 
 #include "SOIL/SOIL2.h"
 
+#define TEXTURE_DEFAULT_ID 1
+
 Texture::Texture(const std::string& filepath)
 	: m_id(0)
 {
 	m_id = SOIL_load_OGL_texture(filepath.c_str(), 0, 0, SOIL_FLAG_INVERT_Y);
+	if (m_id == 0)
+		m_id = TEXTURE_DEFAULT_ID; // Load default texture.
 
 	// Replaced by soil2
 	//glGenTextures(1, &m_id);
