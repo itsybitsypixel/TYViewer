@@ -99,7 +99,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)External Resources\GLAD\include;$(SolutionDir)External Resources\GLFW\include;$(SolutionDir)External Resources\GLM\include;$(SolutionDir)External Resources\SOIL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)External Resources\GLAD\include;$(SolutionDir)External Resources\GLFW\include;$(SolutionDir)External Resources\GLM\include;$(SolutionDir)External Resources\SOIL\include;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -132,16 +132,16 @@
     <ClCompile Include="application.cpp" />
     <ClCompile Include="input\keyboard.cpp" />
     <ClCompile Include="input\mouse.cpp" />
-    <ClCompile Include="loader\assets\mad.cpp" />
-    <ClCompile Include="loader\assets\model.cpp" />
+    <ClCompile Include="loader\assets\mdl.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="model.cpp" />
     <ClCompile Include="util\bitconverter.cpp" />
     <ClCompile Include="util\stringext.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="config.h" />
     <ClInclude Include="graphics\camera.h" />
     <ClInclude Include="graphics\drawable.h" />
-    <ClInclude Include="graphics\material.h" />
     <ClInclude Include="graphics\renderer.h" />
     <ClInclude Include="graphics\shader.h" />
     <ClInclude Include="graphics\submesh.h" />
@@ -154,8 +154,8 @@
     <ClInclude Include="loader\asset.h" />
     <ClInclude Include="assets\MDG3.h" />
     <ClInclude Include="assets\MDL2.h" />
-    <ClInclude Include="loader\assets\mad.h" />
-    <ClInclude Include="loader\assets\model.h" />
+    <ClInclude Include="loader\assets\mdl.h" />
+    <ClInclude Include="model.h" />
     <ClInclude Include="util\bitconverter.h" />
     <ClInclude Include="util\stringext.h" />
   </ItemGroup>

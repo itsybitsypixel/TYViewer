@@ -12,7 +12,7 @@
 
 namespace Loader
 {
-	struct Model : public Asset
+	struct MDL : public Asset
 	{
 		virtual void loadFromFile(const std::string& filepath) override;
 		virtual void loadFromMemory(const char* data, size_t size) override;

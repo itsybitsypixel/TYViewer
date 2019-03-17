@@ -3,7 +3,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-Submesh::Submesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const Texture& texture) :
+Submesh::Submesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, Texture* texture) :
 	Drawable(),
 	Transformable({ 0.0f, 0.0f, 0.0f }),
 	m_vertices(vertices), m_indices(indices), m_texture(texture)
@@ -43,7 +43,7 @@ void Submesh::setup()
 void Submesh::draw(Shader& shader) const
 {
 	shader.bind();
-	m_texture.bind();
+	m_texture->bind();
 
 	shader.setUniformMat4("model", getMatrix());
 

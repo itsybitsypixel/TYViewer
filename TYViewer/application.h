@@ -16,21 +16,15 @@
 #include "graphics/submesh.h"
 #include "graphics/texture.h"
 
-#include "loader/assets/model.h"
-#include "loader/assets/mad.h"
+#include "loader/assets/mdl.h"
 
-
-#define DEFAULT_TEXTURE_FOLDER	"C:/Users/Datorn/Desktop/Ty the Tasmanian Tiger/Content/DDS/"
-#define DEFAULT_MODEL_FOLDER	"C:/Users/Datorn/Desktop/Ty the Tasmanian Tiger/Content/"
-
-#define DEFAULT_RESOLUTION_X 1920
-#define DEFAULT_RESOLUTION_Y 1080
-
+#include "model.h"
+#include "config.h"
 
 class Application
 {
 public:
-	Application(GLFWwindow* window);
+	Application(GLFWwindow* window, const Config& config);
 
 	void initialize();
 	void run();
@@ -43,9 +37,7 @@ public:
 
 private:
 	GLFWwindow* m_window;
-
-	int m_width;
-	int m_height;
+	Config m_config;
 
 	Keyboard m_keyboard;
 	Mouse m_mouse;
@@ -53,7 +45,5 @@ private:
 	Renderer m_renderer;
 	Camera m_camera;
 
-
-	std::vector<Submesh*> m_submeshes;
-	std::unordered_map<std::string, Texture*> m_textures;
+	Model* model;
 };

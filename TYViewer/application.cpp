@@ -2,85 +2,35 @@
 
 void Application::resize(int width, int height)
 {
-	m_width = width;
-	m_height = height;
+	m_config.width = width;
+	m_config.height = height;
 
-	m_camera.setAspectRatio((float)m_width / (float)m_height);
+	m_camera.setAspectRatio((float)m_config.width / (float)m_config.height);
 
-	glViewport(0, 0, m_width, m_height);
+	glViewport(0, 0, m_config.width, m_config.height);
 }
 
 
-Application::Application(GLFWwindow* window) :
+Application::Application(GLFWwindow* window, const Config& config) :
 	m_window(window),
-	m_width	(DEFAULT_RESOLUTION_X),
-	m_height(DEFAULT_RESOLUTION_Y),
+	m_config(config),
 	m_renderer(),
-	m_camera(glm::vec3(0.0f, 0.0f, 0.0f), 60.0f, (float)m_width / (float)m_height)
+	m_camera(glm::vec3(0.0f, 0.0f, 0.0f), 70.0f, (float)m_config.width / (float)m_config.height, 0.1, 50000.0f)
 {}
 
 void Application::initialize()
 {
 	m_renderer.initialize();
 
-	Loader::MAD mad;
-	mad.loadFromFile(std::string(DEFAULT_MODEL_FOLDER) + "global.mad");
+	Loader::MDL mdl;
+	mdl.loadFromFile(m_config.modelPath + m_config.modelName);
 
-	Loader::Model model;
-	model.loadFromFile(std::string(DEFAULT_MODEL_FOLDER) + "room_z1_02.mdl");
-
-	m_textures["default"] = new Texture("res/textures/default.dds");
-
-	for (int i = 0; i < model.subobjects.size(); i++)
-	{
-		for (int j = 0; j < model.subobjects[i].submeshes.size(); j++)
-		{
-			std::vector<Vertex> vertices;
-			for (int k = 0; k < model.subobjects[i].submeshes[j].vertices.size(); k++)
-			{
-				// Convert from Loader::Vertex to Graphics Vertex
-				vertices.push_back(
-					Vertex({
-						{
-							model.subobjects[i].submeshes[j].vertices[k].x,
-							model.subobjects[i].submeshes[j].vertices[k].y,
-							model.subobjects[i].submeshes[j].vertices[k].z,
-						},
-						{
-							model.subobjects[i].submeshes[j].vertices[k].normalX,
-							model.subobjects[i].submeshes[j].vertices[k].normalY,
-							model.subobjects[i].submeshes[j].vertices[k].normalZ,
-						},
-						{
-							model.subobjects[i].submeshes[j].vertices[k].u,
-							model.subobjects[i].submeshes[j].vertices[k].v,
-						},
-						{
-							model.subobjects[i].submeshes[j].vertices[k].skinX,
-							model.subobjects[i].submeshes[j].vertices[k].skinY,
-							model.subobjects[i].submeshes[j].vertices[k].skinZ
-						}
-						}));
-			}
-
-			Texture* texture = NULL;
-			if (m_textures.find(model.subobjects[i].submeshes[j].ident) != m_textures.end())
-			{
-				texture = m_textures[model.subobjects[i].submeshes[j].ident];
-			}
-			else
-			{
-				texture = new Texture(DEFAULT_TEXTURE_FOLDER + model.subobjects[i].submeshes[j].ident + ".dds");
-				m_textures[model.subobjects[i].submeshes[j].ident] = texture;
-			}
-
-			m_submeshes.push_back(new Submesh(vertices, model.subobjects[i].submeshes[j].indices, *texture));
-		}
-	}
+	model = new Model(m_config.texturePath);
+	model->create(mdl);
 }
 void Application::run()
 {
-	Shader shader("res/shaders/default.shader");
+	Shader shader(m_config.applicationPath + "res/shaders/default.shader");
 	shader.bind();
 	shader.setUniform1i("u_Texture", 0);
 
@@ -106,17 +56,7 @@ void Application::run()
 }
 void Application::terminate()
 {
-	for (int i = 0; i < m_submeshes.size(); i++)
-	{
-		delete m_submeshes[i];
-	}
-	for (auto it = m_textures.begin(); it != m_textures.end(); ++it)
-	{
-		delete it->second;
-	}
-
-	m_submeshes.clear();
-	m_textures.clear();
+	delete model;
 
 	glfwTerminate();
 }
@@ -168,10 +108,7 @@ void Application::render(Shader& shader)
 	shader.setUniformMat4("view", view);
 	shader.setUniformMat4("projection", m_camera.getViewProjection());
 
-	for (int i = 0; i < m_submeshes.size(); i++)
-	{
-		m_submeshes[i]->draw(shader);
-	}
+	m_renderer.draw(*model, shader);
 
 	m_renderer.render(m_window);
 }

@@ -1,4 +1,4 @@
-#include "model.h"
+#include "mdl.h"
 
 #include <fstream>
 #include <iostream>
@@ -8,7 +8,7 @@
 
 namespace Loader
 {
-	void Model::loadFromFile(const std::string& filepath)
+	void MDL::loadFromFile(const std::string& filepath)
 	{
 		std::ifstream ifs(filepath, std::ios::binary);
 		std::vector<char> data(std::istreambuf_iterator<char>(ifs), {});
@@ -22,8 +22,16 @@ namespace Loader
 		loadFromMemory(&data[0], data.size());
 	}
 
-	void Model::loadFromMemory(const char* data, size_t size)
+	void MDL::loadFromMemory(const char* data, size_t size)
 	{
+		// Documentation (or the lack of it);
+		// This function is not perfect and there is still data that should 
+		// be read in but is either not used at this moment or not discovered. 
+		// While this code might not be easy to read I've tried to keep it 
+		// linear so it can be followed along with the original .mdl file.
+		// Therefore I wont be commenting  or documenting this code as it 
+		// is likely to change.
+
 		unsigned int amount_of_subobjects	= BitConverter::toUInt16(data, 6);
 		unsigned int amount_of_collisions	= BitConverter::toUInt16(data, 8);
 		unsigned int amount_of_bones		= BitConverter::toUInt16(data, 10);
@@ -32,7 +40,9 @@ namespace Loader
 		int offset_collisions	= BitConverter::toInt32(data, 16);
 		int offset_bones		= BitConverter::toInt32(data, 20);
 
-		for (int offset = offset_subobjects; offset < offset_subobjects + amount_of_subobjects * MDL2_SUBMESH_SIZE; offset += MDL2_SUBMESH_SIZE)
+		for (int offset = offset_subobjects; 
+			offset < offset_subobjects + amount_of_subobjects * MDL2_SUBMESH_SIZE; 
+			offset += MDL2_SUBMESH_SIZE)
 		{
 			Subobject subobject;
 
@@ -94,6 +104,7 @@ namespace Loader
 							BitConverter::toSingleFromByte(data[segment_offset + MDL2_SEGMENT_VERTEX_LIST_OFFSET + vertex_count * 12 + 4 + (k * 4) + 2]),
 
 							// uv (god... I forgot how ugly this is...)
+							// mapping [0 - 4095] to [0.0 - 1.0]
 							BitConverter::toInt16(data, segment_offset + MDL2_SEGMENT_VERTEX_LIST_OFFSET + vertex_count * 12 + 4 + vertex_count * 4 + 4 + k * 8) / 4096.0f,
 							abs((BitConverter::toInt16(data, segment_offset + MDL2_SEGMENT_VERTEX_LIST_OFFSET + vertex_count * 12 + 4 + vertex_count * 4 + 4 + k * 8 + 2) / 4096.0f) - 1.0f),
 

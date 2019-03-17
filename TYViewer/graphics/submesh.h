@@ -12,7 +12,7 @@
 class Submesh : public Drawable, public Transformable
 {
 public:
-	Submesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const Texture& texture);
+	Submesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, Texture* texture);
 
 	virtual void draw(Shader& shader) const override;
 
@@ -23,5 +23,6 @@ private:
 
 	std::vector<Vertex> m_vertices;
 	std::vector<unsigned int> m_indices;
-	Texture m_texture;
+
+	Texture* m_texture;
 };

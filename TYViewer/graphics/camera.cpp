@@ -21,6 +21,11 @@ void Camera::localRotate(const glm::vec2& rotation)
 	m_rotationX += rotation.x * m_sensitivityX;
 	m_rotationY += rotation.y * m_sensitivityY;
 
+	if (m_rotationY > 89.0f)
+		m_rotationY = 89.0f;
+	if (m_rotationY < -89.0f)
+		m_rotationY = -89.0f;
+
 	update();
 }
 

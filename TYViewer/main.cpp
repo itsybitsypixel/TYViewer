@@ -18,15 +18,17 @@
 
 #include "graphics/texture.h"
 
-#include "loader/assets/Model.h"
+#include "loader/assets/MDL.h"
 
 #include "input/mouse.h"
 #include "input/keyboard.h"
 
 #include "application.h"
+#include "config.h"
 
-#define DEFAULT_RESOLUTION_X 1920
-#define DEFAULT_RESOLUTION_Y 1080
+
+#define DEFAULT_RESOLUTION_WIDTH	1280
+#define DEFAULT_RESOLUTION_HEIGHT	720
 
 Application* application;
 
@@ -35,8 +37,34 @@ void onWindowResized(GLFWwindow* window, int width, int height)
 	application->resize(width, height);
 }
 
-int main()
+int main(int argc, char* argv[])
 {
+	std::string applicationPath = std::string(argv[0]);
+	applicationPath = applicationPath.substr(0, applicationPath.find_last_of("\\/")) + "\\";
+
+	std::string modelName = "";
+	std::string modelPath = "res/models/default.mdl";
+	
+	if (argc > 1)
+	{
+		modelPath = std::string(argv[1]);
+	}
+	modelName = modelPath.substr(modelPath.find_last_of("\\/") + 1, modelPath.size() - 1);
+	modelPath = modelPath.substr(0, modelPath.find_last_of("\\/")) + "\\";
+
+	Config config = { 
+		applicationPath, modelPath, modelPath + "DDS/", 
+		modelName,
+		DEFAULT_RESOLUTION_WIDTH, DEFAULT_RESOLUTION_HEIGHT };
+
+
+	std::cout << "[Application path] "	<< config.applicationPath << std::endl;
+	std::cout << "[Model path] "		<< config.modelPath << std::endl;
+	std::cout << "[Texture path] "		<< config.texturePath << std::endl;
+	std::cout << "[Model name] "		<< config.modelName << std::endl;
+
+
+
 	GLFWwindow* window;
 
 	if (!glfwInit())
@@ -49,7 +77,7 @@ int main()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	window = glfwCreateWindow(DEFAULT_RESOLUTION_X, DEFAULT_RESOLUTION_Y, "TYViewer", NULL, NULL);
+	window = glfwCreateWindow(config.width, config.height, "TYViewer", NULL, NULL);
 	if (!window)
 	{
 		std::cout << "[FATAL] Failed to create GLFWwindow!" << std::endl;
@@ -70,7 +98,7 @@ int main()
 	glfwSetWindowSizeCallback(window, onWindowResized);
 
 
-	application = new Application(window);
+	application = new Application(window, config);
 	application->initialize();
 	application->run();
 

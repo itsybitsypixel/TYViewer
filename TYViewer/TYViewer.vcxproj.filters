@@ -39,9 +39,6 @@
     <ClCompile Include="util\bitconverter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="loader\assets\model.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="graphics\camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -54,7 +51,10 @@
     <ClCompile Include="application.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="loader\assets\mad.cpp">
+    <ClCompile Include="loader\assets\mdl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -95,9 +95,6 @@
     <ClInclude Include="loader\asset.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="loader\assets\model.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="graphics\camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -110,10 +107,13 @@
     <ClInclude Include="application.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="graphics\material.h">
+    <ClInclude Include="loader\assets\mdl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="loader\assets\mad.h">
+    <ClInclude Include="model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
