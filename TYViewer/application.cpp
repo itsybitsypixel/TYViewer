@@ -15,7 +15,7 @@ Application::Application(GLFWwindow* window, const Config& config) :
 	m_window(window),
 	m_config(config),
 	m_renderer(),
-	m_camera(glm::vec3(0.0f, 0.0f, 0.0f), 70.0f, (float)m_config.width / (float)m_config.height, 0.1, 50000.0f)
+	m_camera(glm::vec3(0.0f, 0.0f, 300.0f), 70.0f, (float)m_config.width / (float)m_config.height, 0.1, 50000.0f)
 {}
 
 void Application::initialize()
