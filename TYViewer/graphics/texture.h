@@ -5,12 +5,11 @@
 class Texture
 {
 public:
-	Texture() = default;
-	Texture(const std::string& filepath);
+	Texture(unsigned int id);
 	~Texture();
 
 	void bind(unsigned int slot = 0) const;
 	void unbind() const;
 private:
-	unsigned int m_id;
+	unsigned int id;
 };

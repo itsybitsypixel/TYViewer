@@ -1,29 +1,44 @@
 #pragma once
 
-#include <string>
 #include <vector>
-#include <unordered_map>
 
 #include "graphics/drawable.h"
 #include "graphics/transformable.h"
 
-#include "graphics/vertex.h"
-#include "graphics/submesh.h"
-#include "graphics/texture.h"
+#include "graphics/mesh.h"
 
-#include "loader/assets/mdl.h"
+struct Collider 
+{
+	glm::vec3 position;
+	float size;
+};
 
-class Model : public Drawable, public Transformable
+struct Bounds
+{
+	glm::vec3 corner;
+	glm::vec3 size;
+};
+
+struct Bone
+{
+	glm::vec3 defaultPosition;
+};
+
+class Model : public Drawable
 {
 public:
-	Model(const std::string& texturePath);
-	void create(const Loader::MDL& mdl);
+	Model(const std::vector<Mesh*>& meshes);
+	~Model();
 
 	virtual void draw(Shader& shader) const override;
 
-private:
-	std::string m_texturePath;
+	glm::vec3 bounds_crn;
+	glm::vec3 bounds_size;
 
-	std::vector<Submesh> m_submeshes;
-	std::unordered_map<std::string, Texture*> m_textures;
+	std::vector<Collider> colliders;
+	std::vector<Bounds> bounds;
+	std::vector<Bone> bones;
+
+private:
+	std::vector<Mesh*> meshes;
 };

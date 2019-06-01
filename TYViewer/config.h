@@ -1,15 +1,21 @@
 #pragma once
 
 #include <string>
+#include <unordered_map>
 
-struct Config
+class Config
 {
-	std::string applicationPath;
-	std::string modelPath;
-	std::string texturePath;
+public:
+	static std::string model;
 
-	std::string modelName;
+	static unsigned int windowResolutionX;
+	static unsigned int windowResolutionY;
 
-	unsigned int width;
-	unsigned int height;
+	static float backgroundR;
+	static float backgroundG;
+	static float backgroundB;
+	
+
+	static bool save(const std::string& path);
+	static bool load(const std::string& path);
 };

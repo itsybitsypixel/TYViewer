@@ -1,38 +1,47 @@
 #include "mouse.h"
 
-Mouse::Mouse()
+Mouse* Mouse::instance = NULL;
+
+// Goddamnit, I hate callbacks...
+// Forces static classes, makes code look stupid, blah blah
+// I hate it, I hate it, I hate it!
+// But I'm probably not writing this stuff correctly...
+// Oh well!
+// If anyone reads this, feel free to rewrite my stupid, stupid code.
+
+void Mouse::onMouseScrolled(GLFWwindow* window, double xoffset, double yoffset)
 {
-	m_currentMousePositionX = 0.0f;
-	m_currentMousePositionY = 0.0f;
+	instance->verticalMouseScroll = yoffset;
+}
 
-	m_previousMousePositionX = 0.0f;
-	m_previousMousePositionY = 0.0f;
+void Mouse::initialize(GLFWwindow* window)
+{
+	instance = new Mouse();
 
-	m_mouseDeltaX = 0.0f;
-	m_mouseDeltaY = 0.0f;
+	glfwSetScrollCallback(window, onMouseScrolled);
 
 	for (int i = 0; i < GLFW_MOUSE_BUTTON_LAST; i++)
 	{
-		m_current[i].first = false;
-		m_current[i].second = 0.0f;
+		instance->current[i].first = false;
+		instance->current[i].second = 0.0f;
 	}
 }
 
 void Mouse::process(GLFWwindow* window, float dt)
 {
-	m_previousMousePositionX = m_currentMousePositionX;
-	m_previousMousePositionY = m_currentMousePositionY;
-	glfwGetCursorPos(window, &m_currentMousePositionX, &m_currentMousePositionY);
-	m_mouseDeltaX = m_currentMousePositionX - m_previousMousePositionX;
-	m_mouseDeltaY = m_currentMousePositionY - m_previousMousePositionY;
+	instance->previousMousePositionX = instance->currentMousePositionX;
+	instance->previousMousePositionY = instance->currentMousePositionY;
+	glfwGetCursorPos(window, &instance->currentMousePositionX, &instance->currentMousePositionY);
+	instance->mouseDeltaX = instance->currentMousePositionX - instance->previousMousePositionX;
+	instance->mouseDeltaY = instance->currentMousePositionY - instance->previousMousePositionY;
 
 	for (int i = 0; i < GLFW_MOUSE_BUTTON_LAST; i++)
 	{
-		m_current[i].first = glfwGetMouseButton(window, i) == GLFW_PRESS;
+		instance->current[i].first = glfwGetMouseButton(window, i) == GLFW_PRESS;
 
-		if (m_current[i].first)
-			m_current[i].second += dt;
+		if (instance->current[i].first)
+			instance->current[i].second += dt;
 		else
-			m_current[i].second = 0.0f;
+			instance->current[i].second = 0.0f;
 	}
 }

@@ -1,23 +1,44 @@
 #pragma once
 
-#include <vector>
+#include <stdint.h>
+#include <climits>
+#include <memory>
 
-class BitConverter
+template <typename T>
+T swap_endian(T u)
 {
-public:
-	static int8_t toInt8(const char* buffer, size_t position);
-	static int16_t toInt16(const char* buffer, size_t position);
-	static int32_t toInt32(const char* buffer, size_t position);
-	static int64_t toInt64(const char* buffer, size_t position);
+	static_assert (CHAR_BIT == 8, "CHAR_BIT != 8");
 
-	static uint8_t toUInt8(const char* buffer, size_t position);
-	static uint16_t toUInt16(const char* buffer, size_t position);
-	static uint32_t toUInt32(const char* buffer, size_t position);
-	static uint64_t toUInt64(const char* buffer, size_t position);
+	union
+	{
+		T u;
+		unsigned char u8[sizeof(T)];
+	} source, dest;
 
-	static float toSingle(const char* buffer, size_t position);
-	static double toDouble(const char* buffer, size_t position);
+	source.u = u;
 
+	for (size_t k = 0; k < sizeof(T); k++)
+		dest.u8[k] = source.u8[sizeof(T) - k - 1];
 
-	static float toSingleFromByte(const unsigned char byte);
-};
+	return dest.u;
+}
+
+template<typename T>
+T from_bytes(const char* buffer, size_t offset, bool big_endian = false)
+{
+	T t_buf = 0;
+	memcpy(&t_buf, buffer + offset, sizeof(T));
+
+	if (big_endian)
+		t_buf = swap_endian<T>(t_buf);
+
+	return t_buf;
+}
+
+inline float byte_to_single(const char* buffer, size_t offset)
+{
+	uint8_t b = from_bytes<uint8_t>(buffer, offset);
+
+	//return (b < 128) ? b / 127.0f : (b > 128) ? -((256 - b) / 127.0f) : 0.0f;
+	return (b / 128.0f);
+}

@@ -9,10 +9,12 @@
 #include "drawable.h"
 #include "transformable.h"
 
-class Submesh : public Drawable, public Transformable
+class Mesh : public Drawable, public Transformable
 {
 public:
-	Submesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, Texture* texture);
+	Mesh();
+	Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, Texture* texture);
+	~Mesh();
 
 	virtual void draw(Shader& shader) const override;
 

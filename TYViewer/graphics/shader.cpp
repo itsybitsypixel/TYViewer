@@ -1,5 +1,7 @@
 #include "shader.h"
 
+#include <cstdlib>
+
 #include <string>
 #include <fstream>
 #include <iostream>
@@ -8,59 +10,29 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-Shader::Shader()
-	: m_id(0)
-{}
-Shader::Shader(const std::string& filepath)
-	: m_id(0)
+#include "util/stringext.h"
+
+#include "util/parser.h"
+
+#include "application.h"
+
+Shader::Shader(std::ifstream& stream, const std::unordered_map<std::string, int>& properties)
+	: m_id(0),
+	properties(properties)
 {
-	ShaderProgramSource source = parse(filepath);
-	m_id = create(source.vertexSource, source.fragmentSource);
+
+	// TODO :
+	// ONLY FOR DEBUGGING PURPOSES !!!
+	// REMOVE BEFORE PUBLISHING !!!
+	std::pair<std::string, std::string> source = Parser::parseShader(stream, properties);
+
+	m_id = create(source.first, source.second);
 }
 Shader::~Shader()
 {
 	glDeleteProgram(m_id);
 }
 
-ShaderProgramSource Shader::parse(const std::string& filepath)
-{
-	// Parses *.shader file.
-	// In the future we'll need to implement the features shown in the Ty games's *.shader files.
-
-	std::ifstream stream(filepath);
-
-	enum class ShaderType
-	{
-		None = -1,
-		Vertex = 0,
-		Fragment = 1
-	};
-
-	std::stringstream ss[2];
-	ShaderType type = ShaderType::None;
-
-	std::string line;
-	while (getline(stream, line))
-	{
-		if (line.find("#shader") != std::string::npos)
-		{
-			if (line.find("vertex") != std::string::npos)
-			{
-				type = ShaderType::Vertex;
-			}
-			else if (line.find("fragment") != std::string::npos)
-			{
-				type = ShaderType::Fragment;
-			}
-		}
-		else
-		{
-			ss[(int)type] << line << '\n';
-		}
-	}
-
-	return { ss[0].str(), ss[1].str() };
-}
 unsigned int Shader::create(const std::string& vertexShader, const std::string& fragmentShader)
 {
 	unsigned int program = glCreateProgram();
@@ -100,6 +72,7 @@ unsigned Shader::compile(unsigned int type, const std::string& source)
 
 	return id;
 }
+
 
 void Shader::bind() const
 {

@@ -1,17 +1,28 @@
 #pragma once
 
 #include <string>
-#include <vector>
 
-class StringExt
+inline std::string nts(const char* buffer, size_t offset, size_t max_length = -1)
 {
-public:
-	static void trimEnd(std::string& s, char trimCharacter = '\0');
+	size_t index = 0;
+	std::string res = "";
+	while (buffer[offset + index] != '\0')
+	{
+		if (index >= max_length)
+			break;
 
-	static std::vector<std::string> split(const std::string& s, char splitChar);
-	static std::string getTypeFromFilename(const std::string& s);
+		res += (char)buffer[offset + index];
+		index++;
+	}
+	return res;
+}
 
-	static void readUntil(const char* buffer, size_t position, char delimiter, std::string& s);
-	static void readUntilNull(const char* buffer, size_t position, std::string& s);
-	
-};
+inline std::string str(const char* buffer, size_t offset, size_t length)
+{
+	std::string res = "";
+	for (size_t i = offset; i < offset + length; i++)
+	{
+		res += (char)buffer[i];
+	}
+	return res;
+}

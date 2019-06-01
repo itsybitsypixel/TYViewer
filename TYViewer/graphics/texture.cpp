@@ -3,22 +3,12 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "SOIL/SOIL2.h"
-
 #define TEXTURE_DEFAULT_ID 1
 
-Texture::Texture(const std::string& filepath)
-	: m_id(0)
+Texture::Texture(unsigned int id)
+	: id(id)
 {
-	m_id = SOIL_load_OGL_texture(filepath.c_str(), 0, 0, SOIL_FLAG_INVERT_Y);
-	if (m_id == 0)
-		m_id = TEXTURE_DEFAULT_ID; // Load default texture.
-
-	// Replaced by soil2
-	//glGenTextures(1, &m_id);
-	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_width, m_height, 0, GL_RGB, GL_UNSIGNED_BYTE, m_localbuffer);
-
-	glBindTexture(GL_TEXTURE_2D, m_id);
+	glBindTexture(GL_TEXTURE_2D, id);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -30,13 +20,13 @@ Texture::Texture(const std::string& filepath)
 
 Texture::~Texture()
 {
-	glDeleteTextures(1, &m_id);
+	glDeleteTextures(1, &id);
 }
 
 void Texture::bind(unsigned int slot) const
 {
 	glActiveTexture(GL_TEXTURE0 + slot);
-	glBindTexture(GL_TEXTURE_2D, m_id);
+	glBindTexture(GL_TEXTURE_2D, id);
 }
 void Texture::unbind() const
 {

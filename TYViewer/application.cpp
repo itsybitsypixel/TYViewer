@@ -1,114 +1,251 @@
 #include "application.h"
 
+std::string Application::APPLICATION_PATH = "";
+std::string Application::ARCHIVE_PATH = "";
+
 void Application::resize(int width, int height)
 {
-	m_config.width = width;
-	m_config.height = height;
+	if (width == 0 || height == 0)
+	{
+		width = 1;
+		height = 1;
+	}
 
-	m_camera.setAspectRatio((float)m_config.width / (float)m_config.height);
+	Config::windowResolutionX = width;
+	Config::windowResolutionY = height;
 
-	glViewport(0, 0, m_config.width, m_config.height);
+	camera.setAspectRatio((float)width / (float)height);
+
+	glViewport(0, 0, width, height);
 }
 
-
-Application::Application(GLFWwindow* window, const Config& config) :
-	m_window(window),
-	m_config(config),
-	m_renderer(),
-	m_camera(glm::vec3(0.0f, 0.0f, 300.0f), 70.0f, (float)m_config.width / (float)m_config.height, 0.1, 50000.0f)
+Application::Application(GLFWwindow* window) :
+	window(window),
+	renderer(),
+	camera(glm::vec3(0.0f, 20.0f, -100.0f), glm::vec3(90.0f, 0.0f, 0.0f), 70.0f, (float)Config::windowResolutionX / (float)Config::windowResolutionY, 0.2, 30000.0f),
+	mesh(NULL),
+	grid(NULL),
+	shader(NULL)
 {}
+
 
 void Application::initialize()
 {
-	m_renderer.initialize();
+	content.initialize();
+	content.loadRKV(Application::ARCHIVE_PATH);
 
-	Loader::MDL mdl;
-	mdl.loadFromFile(m_config.modelPath + m_config.modelName);
+	Mouse::initialize(window);
+	Keyboard::initialize(window);
 
-	model = new Model(m_config.texturePath);
-	model->create(mdl);
+	renderer.initialize();
+
+	//content.defaultTexture = content.load<Texture>("front_yellow.dds");
+
+	grid = new Grid({ 800, 800 }, 50.0f, glm::vec4(0.4f, 0.4f, 0.4f, 1.0f));
+
+	Font* font = content.load<Font>("font_frontend_pc.wfn");
+	//labels.push_back(new Text("This is a longer sentence with spaces!", font, glm::vec3(0,0,0)));
+
+	shader = content.load<Shader>("standard.shader");
+	shader->bind();
+	shader->setUniform4f("tintColour", glm::vec4(1, 1, 1, 1));
+	shader->setUniform1i("diffuseTexture", 0);
+
+	basic = content.load<Shader>("standard.shader");
+	basic->bind();
+	basic->setUniform4f("tintColour", glm::vec4(1, 1, 1, 1));
+
+	if(Config::model != "")
+		models.push_back(content.load<Model>(Config::model));
+	else
+		models.push_back(content.load<Model>("act_01_ty.mdl"));
 }
 void Application::run()
 {
-	Shader shader(m_config.applicationPath + "res/shaders/default.shader");
-	shader.bind();
-	shader.setUniform1i("u_Texture", 0);
-
 	float elapsed = 0.0f;
 	float previous = 0.0f;
 
 	float dt = 0.0f;
 
-	while (!glfwWindowShouldClose(m_window))
+	while (!glfwWindowShouldClose(window))
 	{
 		elapsed = glfwGetTime();
 		dt = elapsed - previous;
 		previous = elapsed;
 
-		m_keyboard.process(m_window, dt);
-		m_mouse.process(m_window, dt);
+		Keyboard::process(window, dt);
+		Mouse::process(window, dt);
 
 		update(dt);
-		render(shader);
+		render(*shader);
+		
+		glfwPollEvents();
 	}
 
 	terminate();
 }
 void Application::terminate()
 {
-	delete model;
-
+	Config::save(Application::APPLICATION_PATH + "config.cfg");
 	glfwTerminate();
 }
 
 void Application::update(float dt)
 {
-	if (m_mouse.isButtonHeld(GLFW_MOUSE_BUTTON_MIDDLE))
+	float mouseInputX = Mouse::getMouseDelta().x;
+	float mouseInputY = Mouse::getMouseDelta().y;
+
+	float horizontal	= 
+		(Keyboard::isKeyHeld(GLFW_KEY_A)) ?  1.0f : 
+		(Keyboard::isKeyHeld(GLFW_KEY_D)) ? -1.0f : 
+		0.0f;
+	float vertical		= 
+		(Keyboard::isKeyHeld(GLFW_KEY_W)) ?  1.0f : 
+		(Keyboard::isKeyHeld(GLFW_KEY_S)) ? -1.0f : 
+		0.0f;
+
+	if (Mouse::isButtonHeld(GLFW_MOUSE_BUTTON_MIDDLE))
 	{
-		m_camera.localRotate({ m_mouse.getMouseDelta().x, -m_mouse.getMouseDelta().y });
+		camera.localRotate(glm::vec3(mouseInputX, -mouseInputY, 0.0f) * 0.1f);
 	}
 
-	float modifier = 1.0f;
+	if (Keyboard::isKeyHeld(GLFW_KEY_LEFT_CONTROL))
+		camera.localTranslate(glm::vec3(horizontal, 0.0f, vertical) * 120.0f * dt);
+	else if (Keyboard::isKeyHeld(GLFW_KEY_LEFT_SHIFT))
+		camera.localTranslate(glm::vec3(horizontal, 0.0f, vertical) * 1520.0f * dt);
+	else
+		camera.localTranslate(glm::vec3(horizontal, 0.0f, vertical) * 820.0f * dt);
 
-	if (m_keyboard.isKeyHeld(GLFW_KEY_LEFT_SHIFT))
+	if (Keyboard::isKeyPressed(GLFW_KEY_1))
 	{
-		modifier = 5.0f;
+		drawGrid = !drawGrid;
 	}
-	else if (m_keyboard.isKeyHeld(GLFW_KEY_LEFT_CONTROL))
+	if (Keyboard::isKeyPressed(GLFW_KEY_2))
 	{
-		modifier = 0.05f;
+		drawBounds = !drawBounds;
+	}
+	if (Keyboard::isKeyPressed(GLFW_KEY_3))
+	{
+		drawColliders = !drawColliders;
+	}
+	if (Keyboard::isKeyPressed(GLFW_KEY_4))
+	{
+		drawBones = !drawBones;
 	}
 
-	if (m_keyboard.isKeyHeld(GLFW_KEY_W))
+	if (Keyboard::isKeyPressed(GLFW_KEY_F))
 	{
-		m_camera.localTranslate(glm::vec3(0.0f, 0.0f, 1.0f) * modifier * dt);
+		wireframe = !wireframe;
+		if (wireframe)
+		{
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		}
+		else
+		{
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		}
 	}
-	if (m_keyboard.isKeyHeld(GLFW_KEY_S))
+
+	if (Keyboard::isKeyPressed(GLFW_KEY_T))
 	{
-		m_camera.localTranslate(glm::vec3(0.0f, 0.0f, -1.0f) * modifier * dt);
+		Debug::log
+		(
+			"Camera Position : { " +
+			std::to_string(camera.getPosition().x) +
+			", " +
+			std::to_string(camera.getPosition().y) +
+			", " +
+			std::to_string(camera.getPosition().z) + " }"
+		);
+		Debug::log
+		(
+			"Camera Rotation : { " +
+			std::to_string(camera.getRotation().x) +
+			", " +
+			std::to_string(camera.getRotation().y) +
+			", " +
+			std::to_string(camera.getRotation().z) + " }"
+		);
 	}
-	if (m_keyboard.isKeyHeld(GLFW_KEY_A))
+
+	if (Keyboard::isKeyHeld(GLFW_KEY_KP_ADD))
 	{
-		m_camera.localTranslate(glm::vec3(1.0f, 0.0f, 0.0f) * modifier * dt);
+		camera.setFieldOfView(camera.getFieldOfView() - 30.0f * dt);
+		if (camera.getFieldOfView() < 1.0f)
+			camera.setFieldOfView(1.0f);
 	}
-	if (m_keyboard.isKeyHeld(GLFW_KEY_D))
+	else if (Keyboard::isKeyHeld(GLFW_KEY_KP_SUBTRACT))
 	{
-		m_camera.localTranslate(glm::vec3(-1.0f, 0.0f, 0.0f) * modifier * dt);
+		camera.setFieldOfView(camera.getFieldOfView() + 30.0f * dt);
+		if (camera.getFieldOfView() > 120.0f)
+			camera.setFieldOfView(120.0f);
 	}
 }
+
 void Application::render(Shader& shader)
 {
-	m_renderer.clear();
+	renderer.clear();
 
 	// Display as a left-handed coordinate system.
 	glm::mat4 view;
-	view = m_camera.getViewMatrix();
+	view = camera.getViewMatrix();
 	view = glm::scale(view, glm::vec3(1.0f, 1.0f, -1.0f));
 
-	shader.setUniformMat4("view", view);
-	shader.setUniformMat4("projection", m_camera.getViewProjection());
+	glm::mat4 projection;
+	projection = camera.getProjectionMatrix();
 
-	m_renderer.draw(*model, shader);
+	glm::mat4 vpmatrix = projection * view;
 
-	m_renderer.render(m_window);
+	shader.bind();
+	shader.setUniformMat4("VPMatrix", vpmatrix);
+
+	for (auto& model : models)
+	{
+		renderer.draw(*model, shader);
+	}
+
+	for (auto& label : labels)
+	{
+		label->draw(shader);
+	}
+
+	basic->bind();
+	basic->setUniformMat4("VPMatrix", vpmatrix);
+	basic->setUniformMat4("modelMatrix", glm::mat4(1.0f));
+
+	if (drawGrid)
+	{
+		renderer.draw(*grid, *basic);
+	}
+
+	for (auto& model : models)
+	{
+		if (drawBounds)
+		{
+			renderer.drawHollowBox(model->bounds_crn, model->bounds_size, glm::vec4(1, 1, 1, 1));
+
+			for (auto& bounds : model->bounds)
+			{
+				renderer.drawHollowBox(bounds.corner, bounds.size, glm::vec4(1, 1, 1, 1));
+			}
+		}
+
+		if (drawColliders)
+		{
+			for (auto& collider : model->colliders)
+			{
+				renderer.drawSphere(collider.position, collider.size / 2.0f, glm::vec4(1, 0, 0, 1));
+			}
+		}
+
+		if (drawBones)
+		{
+			for (auto& bone : model->bones)
+			{
+				renderer.drawSphere(bone.defaultPosition, 2.0f, glm::vec4(1, 1, 1, 1));
+			}
+		}
+	}
+
+	renderer.render(window);
 }

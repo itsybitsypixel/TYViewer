@@ -1,24 +1,28 @@
 #include "keyboard.h"
 
-Keyboard::Keyboard()
+Keyboard* Keyboard::instance = NULL;
+
+void Keyboard::initialize(GLFWwindow* window)
 {
+	instance = new Keyboard();
+
 	for (int i = 0; i < GLFW_KEY_LAST; i++)
 	{
-		m_current[i].first = false;
-		m_current[i].second = 0.0f;
+		instance->current[i].first = false;
+		instance->current[i].second = 0.0f;
 	}
 }
 
 void Keyboard::process(GLFWwindow* window, float dt)
 {
-	m_previous = m_current;
+	instance->previous = instance->current;
 	for (int i = 0; i < GLFW_KEY_LAST; i++)
 	{
-		m_current[i].first = glfwGetKey(window, i) == GLFW_PRESS;
+		instance->current[i].first = glfwGetKey(window, i) == GLFW_PRESS;
 
-		if (m_current[i].first)
-			m_current[i].second += dt;
+		if (instance->current[i].first)
+			instance->current[i].second += dt;
 		else
-			m_current[i].second = 0.0f;
+			instance->current[i].second = 0.0f;
 	}
 }

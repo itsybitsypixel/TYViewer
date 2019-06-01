@@ -1,34 +1,11 @@
-#include <string>
-#include <fstream>
 #include <iostream>
-#include <sstream>
-#include <unordered_map>
-#include <chrono>
+#include <string>
 
 #include <GLAD/glad.h>
 #include <GLFW/glfw3.h>
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
-#include "graphics/submesh.h"
-#include "graphics/shader.h"
-#include "graphics/camera.h"
-
-#include "graphics/texture.h"
-
-#include "loader/assets/MDL.h"
-
-#include "input/mouse.h"
-#include "input/keyboard.h"
-
 #include "application.h"
 #include "config.h"
-
-
-#define DEFAULT_RESOLUTION_WIDTH	1280
-#define DEFAULT_RESOLUTION_HEIGHT	720
 
 Application* application;
 
@@ -39,31 +16,75 @@ void onWindowResized(GLFWwindow* window, int width, int height)
 
 int main(int argc, char* argv[])
 {
-	std::string applicationPath = std::string(argv[0]);
-	applicationPath = applicationPath.substr(0, applicationPath.find_last_of("\\/")) + "\\";
+	/*
+	if (argc == 1)
+	{
+		std::string application_path(argv[0]);
+		std::string archive_path = "res/Data_PC.rkv";
 
-	std::string modelName = "";
-	std::string modelPath = "res/models/default.mdl";
-	
+		size_t p = application_path.find_last_of("\\/");
+		if (p != std::string::npos)
+		{
+			application_path.erase(p + 1);
+		}
+
+		std::cout << application_path << std::endl;
+		std::cout << archive_path << std::endl;
+
+		std::cout << std::endl;
+
+		Application::APPLICATION_PATH = application_path;
+		Application::ARCHIVE_PATH = archive_path;
+	}
+	*/
 	if (argc > 1)
 	{
-		modelPath = std::string(argv[1]);
+		std::string application_path(argv[0]);
+		std::string archive_path(argv[1]);
+		
+		size_t p = application_path.find_last_of("\\/");
+		if (p != std::string::npos)
+		{
+			application_path.erase(p + 1);
+		}
+
+		std::cout << application_path << std::endl;
+		std::cout << archive_path << std::endl;
+
+		std::cout << std::endl;
+
+		Application::APPLICATION_PATH = application_path;
+		Application::ARCHIVE_PATH = archive_path;
 	}
-	modelName = modelPath.substr(modelPath.find_last_of("\\/") + 1, modelPath.size() - 1);
-	modelPath = modelPath.substr(0, modelPath.find_last_of("\\/")) + "\\";
+	else
+	{
+		std::cout << "Please drag rkv file onto executable!" << std::endl;
+		std::cin.get();
 
-	Config config = { 
-		applicationPath, modelPath, modelPath + "DDS/", 
-		modelName,
-		DEFAULT_RESOLUTION_WIDTH, DEFAULT_RESOLUTION_HEIGHT };
+		return -1;
+	}
 
+	if (!Config::load(Application::APPLICATION_PATH + "config.cfg"))
+	{
+		std::cout << "Failed to load config file." << std::endl <<
+			"A config file will now be created where you can enter which model to load." << std::endl <<
+			"Please relaunch after." << std::endl << std::endl;
 
-	std::cout << "[Application path] "	<< config.applicationPath << std::endl;
-	std::cout << "[Model path] "		<< config.modelPath << std::endl;
-	std::cout << "[Texture path] "		<< config.texturePath << std::endl;
-	std::cout << "[Model name] "		<< config.modelName << std::endl;
+		if (!Config::save(Application::APPLICATION_PATH + "config.cfg"))
+		{
+			std::cout << "Failed to create config!" << std::endl <<
+				"Check if program has write permission to executable folder." << std::endl;
 
+			std::cin.get();
 
+			return -1;
+		}
+
+		std::cout << "Press enter to exit program..." << std::endl;
+		std::cin.get();
+
+		return -1;
+	}
 
 	GLFWwindow* window;
 
@@ -77,7 +98,7 @@ int main(int argc, char* argv[])
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	window = glfwCreateWindow(config.width, config.height, "TYViewer", NULL, NULL);
+	window = glfwCreateWindow(Config::windowResolutionX, Config::windowResolutionY, "TYViewer", NULL, NULL);
 	if (!window)
 	{
 		std::cout << "[FATAL] Failed to create GLFWwindow!" << std::endl;
@@ -98,7 +119,7 @@ int main(int argc, char* argv[])
 	glfwSetWindowSizeCallback(window, onWindowResized);
 
 
-	application = new Application(window, config);
+	application = new Application(window);
 	application->initialize();
 	application->run();
 

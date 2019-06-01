@@ -2,44 +2,63 @@
 
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
 
 #include <glm/gtc/matrix_transform.hpp>
 
 class Camera
 {
 public:
-	Camera(glm::vec3 position, float fieldOfView, float aspectRatio, float near = 0.1f, float far = 10000.0f);
+	Camera(const glm::vec3& position, const glm::vec3& rotation,
+		float fieldOfView, float aspectRatio, float clipNear = 0.1f, float clipFar = 8000.0f);
 
-	inline void setFieldOfView(float fov)	{ m_fieldOfView = fov; }
-	inline void setAspectRatio(float ratio) { m_aspectRatio = ratio; }
+public:
+	void setPosition(const glm::vec3& p);
+	const glm::vec3& getPosition() const;
 
-	void localTranslate(const glm::vec3& translation);
-	void localRotate(const glm::vec2& rotation);
+	void setRotation(const glm::vec3& r);
+	const glm::vec3& getRotation() const;
 
-	const glm::mat4 getViewProjection() const;
-	const glm::mat4 getViewMatrix() const;
+	void setFieldOfView(const float& fov);
+	const float& getFieldOfView() const;
+
+	void setAspectRatio(const float& ar);
+	const float& getAspectRatio() const;
+
+	void setClipPlaneNear(const float& n);
+	const float& getClipPlaneNear() const;
+
+	void setClipPlaneFar(const float& f);
+	const float& getClipPlaneFar() const;
+
+	const glm::mat4& getProjectionMatrix() const;
+	const glm::mat4& getViewMatrix() const;
+
+public:
+	void localRotate(const glm::vec3& r);
+	void localTranslate(const glm::vec3& t);
 
 private:
-	void update();
+	void updateProjectionMatrix();
+	void updateViewMatrix();
 
-	float m_fieldOfView;
-	float m_aspectRatio;
-	
-	float m_near;
-	float m_far;
+private:
+	float fieldOfView;
+	float aspectRatio;
 
-	float m_speed = 200.0f;
+	float clipPlaneNear;
+	float clipPlaneFar;
 
-	float m_sensitivityX = 0.1f;
-	float m_sensitivityY = 0.1f;
+private:
+	glm::vec3 position;
+	glm::vec3 rotation;
 
-	float m_rotationX = -90.0f;;
-	float m_rotationY = 0.0f;
+	glm::vec3 localForward;
+	glm::vec3 localUp;
+	glm::vec3 localRight;
 
-	glm::vec3 m_position;
-	glm::vec3 m_forward;
-	glm::vec3 m_up;
-	glm::vec3 m_right;
+	glm::vec3 worldUp;
 
-	glm::vec3 m_worldUp;
+	glm::mat4 projection;
+	glm::mat4 view;
 };

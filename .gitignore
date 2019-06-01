@@ -330,3 +330,10 @@ ASALocalRun/
 .mfractor/
 /External Resources
 /TYViewer/glad.c
+/TYViewer/graphics/material.h
+/TYLoader
+/TYViewer/archive.h
+/TYViewer/archive.cpp
+/TYViewer/config.cfg
+/TYViewer/res
+/TYViewer_v004.zip

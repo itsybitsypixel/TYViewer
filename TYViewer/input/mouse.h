@@ -9,30 +9,45 @@
 class Mouse
 {
 public:
-	Mouse();
+	static Mouse* instance;
 
-	inline bool isButtonPressed(int button) const
+	static void onMouseScrolled(GLFWwindow* window, double xoffset, double yoffset);
+
+
+	static void initialize(GLFWwindow* window);
+
+	static inline bool isButtonPressed(int button)
 	{
-		return (m_current[button].first == true || m_previous[button].first == false);
+		return (instance->current[button].first == true || instance->previous[button].first == false);
 	}
-	inline bool isButtonHeld(int button, float time = 0.0f) const
+	static inline bool isButtonHeld(int button, float time = 0.0f)
 	{
-		return (m_current[button].first == true || m_previous[button].first == true) && m_current[button].second >= time;
+		return (instance->current[button].first == true || instance->previous[button].first == true) && instance->current[button].second >= time;
 	}
-	inline bool isButtonReleased(int button) const
+	static inline bool isButtonReleased(int button)
 	{
-		return (m_current[button].first == false || m_previous[button].first == true);
+		return (instance->current[button].first == false || instance->previous[button].first == true);
 	}
 
-	inline glm::vec2 getMousePosition() const { return { m_currentMousePositionX, m_currentMousePositionY }; }
-	inline glm::vec2 getMouseDelta() const { return { m_mouseDeltaX, m_mouseDeltaY }; }
+	static inline glm::vec2 getMousePosition() { return { instance->currentMousePositionX, instance->currentMousePositionY }; }
+	static inline glm::vec2 getMouseDelta() { return { instance->mouseDeltaX, instance->mouseDeltaY }; }
 
-	void process(GLFWwindow* window, float dt);
-private:
-	std::array<std::pair<bool, float>, 16> m_current;
-	std::array<std::pair<bool, float>, 16> m_previous;
+	static inline double getMouseScrollDelta() 
+	{ 
+		double d = instance->verticalMouseScroll;
+		instance->verticalMouseScroll = 0.0;
+		return d; 
+	}
 
-	double m_currentMousePositionX, m_currentMousePositionY;
-	double m_previousMousePositionX, m_previousMousePositionY;
-	double m_mouseDeltaX, m_mouseDeltaY;
+	static void process(GLFWwindow* window, float dt);
+
+protected:
+	std::array<std::pair<bool, float>, 16> current;
+	std::array<std::pair<bool, float>, 16> previous;
+
+	double currentMousePositionX, currentMousePositionY;
+	double previousMousePositionX, previousMousePositionY;
+	double mouseDeltaX, mouseDeltaY;
+	
+	double verticalMouseScroll;
 };

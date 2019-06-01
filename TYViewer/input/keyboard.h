@@ -109,24 +109,26 @@ enum struct Keys
 class Keyboard
 {
 public:
-	Keyboard();
+	static Keyboard* instance;
 
-	inline bool isKeyPressed(int key) const
+	static void initialize(GLFWwindow* window);
+
+	static inline bool isKeyPressed(int key)
 	{
-		return (m_current[key].first == true || m_previous[key].first == false);
+		return (instance->current[key].first == true && instance->previous[key].first == false);
 	}
-	inline bool isKeyHeld(int key, float time = 0.0f) const
+	static inline bool isKeyHeld(int key, float time = 0.0f)
 	{ 
-		return (m_current[key].first == true || m_previous[key].first == true) && m_current[key].second >= time; 
+		return (instance->current[key].first == true && instance->previous[key].first == true) && instance->current[key].second >= time;
 	}
-	inline bool isKeyReleased(int key) const
+	static inline bool isKeyReleased(int key)
 	{ 
-		return (m_current[key].first == false || m_previous[key].first == true); 
+		return (instance->current[key].first == false && instance->previous[key].first == true);
 	}
 
-	void process(GLFWwindow* window, float dt);
+	static void process(GLFWwindow* window, float dt);
 
-private:
-	std::array<std::pair<bool, float>, 512> m_current;
-	std::array<std::pair<bool, float>, 512> m_previous;
+protected:
+	std::array<std::pair<bool, float>, 512> current;
+	std::array<std::pair<bool, float>, 512> previous;
 };

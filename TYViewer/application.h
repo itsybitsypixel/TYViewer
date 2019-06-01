@@ -9,22 +9,28 @@
 #include "input/keyboard.h"
 #include "input/mouse.h"
 
+#include "content.h"
+
 #include "graphics/camera.h"
 #include "graphics/renderer.h"
 #include "graphics/shader.h"
 
-#include "graphics/submesh.h"
+#include "graphics/mesh.h"
 #include "graphics/texture.h"
+#include "graphics/text.h"
 
-#include "loader/assets/mdl.h"
+#include "grid.h"
 
-#include "model.h"
 #include "config.h"
 
 class Application
 {
 public:
-	Application(GLFWwindow* window, const Config& config);
+	static std::string APPLICATION_PATH;
+	static std::string ARCHIVE_PATH;
+
+public:
+	Application(GLFWwindow* window);
 
 	void initialize();
 	void run();
@@ -36,14 +42,26 @@ public:
 	void resize(int width, int height);
 
 private:
-	GLFWwindow* m_window;
-	Config m_config;
+	bool drawGrid = true;
+	bool drawBounds = true;
+	bool drawColliders = true;
+	bool drawBones = true;
 
-	Keyboard m_keyboard;
-	Mouse m_mouse;
+	bool wireframe = false;
 
-	Renderer m_renderer;
-	Camera m_camera;
+	GLFWwindow* window;
 
-	Model* model;
+	Renderer renderer;
+	Camera camera;
+
+	Content content;
+
+	Shader* shader;
+	Shader* basic;
+
+	Grid* grid;
+
+	std::vector<Model*> models;
+	std::vector<Text*> labels;
+	Mesh* mesh;
 };

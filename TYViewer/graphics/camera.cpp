@@ -3,48 +3,126 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-Camera::Camera(glm::vec3 position, float fieldOfView, float aspectRatio, float near, float far) :
-	m_position(position),
-	m_fieldOfView(fieldOfView), m_aspectRatio(aspectRatio), 
-	m_near(near), m_far(far),
-	m_worldUp(glm::vec3(0.0f, 1.0f, 0.0f))
+Camera::Camera(const glm::vec3& position, const glm::vec3& rotation,
+	float fieldOfView, float aspectRatio, float clipNear, float clipFar) :
+	position(position),
+	rotation(rotation),
+	fieldOfView(fieldOfView),
+	aspectRatio(aspectRatio),
+	clipPlaneNear(clipNear), clipPlaneFar(clipFar),
+	worldUp({ 0.0f, 1.0f, 0.0f }),
+
+	projection(glm::mat4(1.0f)), view(glm::mat4(1.0f))
 {
-	update();
+	updateProjectionMatrix();
+	updateViewMatrix();
 }
 
-void Camera::localTranslate(const glm::vec3& translation)
+void Camera::setPosition(const glm::vec3& p)
 {
-	m_position += ((-m_right * translation.x) + (m_up * translation.y) + (m_forward * translation.z)) * m_speed;
+	position = p;
+	updateViewMatrix();
 }
-void Camera::localRotate(const glm::vec2& rotation)
+const glm::vec3& Camera::getPosition() const
 {
-	m_rotationX += rotation.x * m_sensitivityX;
-	m_rotationY += rotation.y * m_sensitivityY;
-
-	if (m_rotationY > 89.0f)
-		m_rotationY = 89.0f;
-	if (m_rotationY < -89.0f)
-		m_rotationY = -89.0f;
-
-	update();
+	return position;
 }
 
-const glm::mat4 Camera::getViewProjection() const
+void Camera::setRotation(const glm::vec3& r)
 {
-	return glm::perspective(glm::radians(m_fieldOfView), m_aspectRatio, m_near, m_far);
+	rotation = r;
+	updateViewMatrix();
 }
-const glm::mat4 Camera::getViewMatrix() const
+const glm::vec3& Camera::getRotation() const
 {
-	return glm::lookAt(m_position, m_position + m_forward, m_up);
+	return rotation;
 }
 
-void Camera::update()
+void Camera::setFieldOfView(const float& fov)
 {
-	m_forward.x = cos(glm::radians(m_rotationX)) * cos(glm::radians(m_rotationY));
-	m_forward.y = sin(glm::radians(m_rotationY));
-	m_forward.z = sin(glm::radians(m_rotationX)) * cos(glm::radians(m_rotationY));
-	m_forward = glm::normalize(m_forward);
+	fieldOfView = fov;
+	updateProjectionMatrix();
+}
+const float& Camera::getFieldOfView() const
+{
+	return fieldOfView;
+}
 
-	m_right = glm::normalize(glm::cross(m_forward, m_worldUp));
-	m_up	= glm::normalize(glm::cross(m_right, m_forward));
+void Camera::setAspectRatio(const float& ar)
+{
+	aspectRatio = ar;
+	updateProjectionMatrix();
+}
+const float& Camera::getAspectRatio() const
+{
+	return aspectRatio;
+}
+
+void Camera::setClipPlaneNear(const float& n)
+{
+	clipPlaneNear = n;
+	updateProjectionMatrix();
+}
+const float& Camera::getClipPlaneNear() const
+{
+	return clipPlaneNear;
+}
+
+void Camera::setClipPlaneFar(const float& f)
+{
+	clipPlaneFar = f;
+	updateProjectionMatrix();
+}
+const float& Camera::getClipPlaneFar() const
+{
+	return clipPlaneFar;
+}
+
+
+const glm::mat4& Camera::getProjectionMatrix() const
+{
+	return projection;
+}
+
+const glm::mat4& Camera::getViewMatrix() const
+{
+	return view;
+}
+
+
+void Camera::localRotate(const glm::vec3& r)
+{
+	rotation += r;
+
+	if (rotation.y > 89.0f)
+		rotation.y = 89.0f;
+	if (rotation.y < -89.0f)
+		rotation.y = -89.0f;
+
+	updateViewMatrix();
+}
+
+void Camera::localTranslate(const glm::vec3& t)
+{
+	position += -localRight * t.x + localUp * t.y + localForward * t.z;
+	updateViewMatrix();
+}
+
+
+void Camera::updateProjectionMatrix()
+{
+	projection = glm::perspective(glm::radians(fieldOfView), aspectRatio, clipPlaneNear, clipPlaneFar);
+}
+
+void Camera::updateViewMatrix()
+{
+	localForward.x = std::cos(glm::radians(rotation.x)) * std::cos(glm::radians(rotation.y));
+	localForward.y = std::sin(glm::radians(rotation.y));
+	localForward.z = std::sin(glm::radians(rotation.x)) * std::cos(glm::radians(rotation.y));
+	localForward = glm::normalize(localForward);
+
+	localRight = glm::normalize(glm::cross(localForward, worldUp));
+	localUp = glm::normalize(glm::cross(localRight, localForward));
+
+	view = glm::lookAt(position, position + localForward, localUp);
 }
