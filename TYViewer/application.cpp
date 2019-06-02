@@ -184,7 +184,7 @@ void Application::update(float dt)
 
 void Application::render(Shader& shader)
 {
-	renderer.clear();
+	renderer.clear(glm::vec4(Config::backgroundR, Config::backgroundG, Config::backgroundB, 1.0f));
 
 	// Display as a left-handed coordinate system.
 	glm::mat4 view;
