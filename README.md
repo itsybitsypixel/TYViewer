@@ -5,12 +5,18 @@ A model viewer for Ty the Tasmanian Tiger.
 
 # Controls
 **WASD** to move camera\
+**MIDDLE MOUSE** to rotate camera\
 **LShift** speed up movement\
 **LCTRL** slow down movement
 
+
+**ALPHA 1** toggle grid\
+**ALPHA 2** toggle bounds\
+**ALPHA 3** toggle colliders\
+**ALPHA 4** toggle bones
+
 # Using
-First you'll need to extract the files needed from the game. To do this, use either my [TYExtractor](https://github.com/Pixeln/TYExtractor/releases) or [rkv-extract](https://github.com/Dnawrkshp/ty-1-tools/tree/master/rkv-extract) by [Dnawrkshp](https://github.com/Dnawrkshp).\
-After that you can locate a model file based on its **.mdl** extension and simply drag it onto the **TYViewer** executable.
+Drag '.rkv' file onto executable. A config file will be generated where program is located where you can enter which model to load. For a list of models, click [here](https://gist.github.com/Pixeln/14d7936cd92c13af976cc48d48741d39).
 
 # Requirements (for using)
 * OpenGL 3.3 compatible GPU
