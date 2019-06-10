@@ -32,7 +32,14 @@ Application::Application(GLFWwindow* window) :
 void Application::initialize()
 {
 	content.initialize();
-	content.loadRKV(Application::ARCHIVE_PATH);
+	if (!content.loadRKV(Config::archive))
+	{
+		std::cout << "Have you entered correct path in 'config.cfg'?" << std::endl;
+		std::cin.get();
+
+		terminate();
+		return;
+	}
 
 	Mouse::initialize(window);
 	Keyboard::initialize(window);

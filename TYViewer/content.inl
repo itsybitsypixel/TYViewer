@@ -133,7 +133,13 @@ inline Model* Content::load(const std::string& name)
 						triangleIndex += 2;
 					}
 
-					meshes.push_back(new Mesh(vertices, indices, load<Texture>(mesh.material + ".dds")));
+					Texture* texture = load<Texture>(mesh.material + ".dds");
+					if (texture == defaultTexture)
+					{
+						std::cout << "Failed to load texture: '" + mesh.material + "' !" << std::endl
+							<< "-!- This should not appear after fully implementing materials! -!-" << std::endl;
+					}
+					meshes.push_back(new Mesh(vertices, indices, texture));
 				}
 			}
 			

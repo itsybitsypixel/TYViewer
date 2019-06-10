@@ -16,59 +16,11 @@ void onWindowResized(GLFWwindow* window, int width, int height)
 
 int main(int argc, char* argv[])
 {
-	/*
-	if (argc == 1)
-	{
-		std::string application_path(argv[0]);
-		std::string archive_path = "res/Data_PC.rkv";
-
-		size_t p = application_path.find_last_of("\\/");
-		if (p != std::string::npos)
-		{
-			application_path.erase(p + 1);
-		}
-
-		std::cout << application_path << std::endl;
-		std::cout << archive_path << std::endl;
-
-		std::cout << std::endl;
-
-		Application::APPLICATION_PATH = application_path;
-		Application::ARCHIVE_PATH = archive_path;
-	}
-	*/
-	if (argc > 1)
-	{
-		std::string application_path(argv[0]);
-		std::string archive_path(argv[1]);
-		
-		size_t p = application_path.find_last_of("\\/");
-		if (p != std::string::npos)
-		{
-			application_path.erase(p + 1);
-		}
-
-		std::cout << application_path << std::endl;
-		std::cout << archive_path << std::endl;
-
-		std::cout << std::endl;
-
-		Application::APPLICATION_PATH = application_path;
-		Application::ARCHIVE_PATH = archive_path;
-	}
-	else
-	{
-		std::cout << "Please drag rkv file onto executable!" << std::endl;
-		std::cin.get();
-
-		return -1;
-	}
-
 	if (!Config::load(Application::APPLICATION_PATH + "config.cfg"))
 	{
 		std::cout << "Failed to load config file." << std::endl <<
 			"A config file will now be created where you can enter which model to load." << std::endl <<
-			"Please relaunch after." << std::endl << std::endl;
+			"Please relaunch after!" << std::endl << std::endl;
 
 		if (!Config::save(Application::APPLICATION_PATH + "config.cfg"))
 		{
@@ -79,6 +31,8 @@ int main(int argc, char* argv[])
 
 			return -1;
 		}
+
+		std::cout << "Created config file." << std::endl << std::endl;
 
 		std::cout << "Press enter to exit program..." << std::endl;
 		std::cin.get();

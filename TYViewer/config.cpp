@@ -6,6 +6,7 @@
 #include <iostream>
 
 std::string Config::model = "";
+std::string Config::archive = "";
 
 unsigned int Config::windowResolutionX = 1280;
 unsigned int Config::windowResolutionY = 720;
@@ -24,6 +25,7 @@ bool Config::save(const std::string& path)
 		return false;
 
 	stream << "Model" << "=" << model << std::endl;
+	stream << "Archive" << "=" << archive << std::endl;
 
 	stream << "WindowResolutionX" << "=" << std::to_string(windowResolutionX) << std::endl;
 	stream << "WindowResolutionY" << "=" << std::to_string(windowResolutionY) << std::endl;
@@ -62,6 +64,10 @@ bool Config::load(const std::string& path)
 		if (name == "Model")
 		{
 			model = value;
+		}
+		else if (name == "Archive")
+		{
+			archive = value;
 		}
 
 		else if (name == "WindowResolutionX")
