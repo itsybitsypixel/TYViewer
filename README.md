@@ -3,6 +3,11 @@ A model viewer for Ty the Tasmanian Tiger.
 
 ![preview](preview.png)
 
+# Using
+Start the program. If a config file does not exist in program directory, one will be created. In the 'config.cfg' file, enter path to 'Data_PC.rkv' (located in the game folder) and which model to load.
+
+A list of model names can be found [here](https://gist.github.com/Pixeln/14d7936cd92c13af976cc48d48741d39).
+
 # Controls
 **WASD** to move camera\
 **MIDDLE MOUSE** to rotate camera\
@@ -15,8 +20,6 @@ A model viewer for Ty the Tasmanian Tiger.
 **ALPHA 3** toggle colliders\
 **ALPHA 4** toggle bones
 
-# Using
-Drag '.rkv' file onto executable. A config file will be generated where program is located where you can enter which model to load. For a list of models, click [here](https://gist.github.com/Pixeln/14d7936cd92c13af976cc48d48741d39).
 
 # Requirements (for using)
 * OpenGL 3.3 compatible GPU
